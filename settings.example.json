@@ -1,0 +1,10 @@
+{
+  "keyFile": ".secrets/TYPESAFE_API_KEY",
+  "sourceRoots": ["."],
+  "geminiEntry": "~/AppData/Local/agy/bin/agy.exe",
+  "geminiModel": "CHOOSE_AVAILABLE_GEMINI_FLASH_MODEL",
+  "jevModel": "jev-latest",
+  "runtimeDirectory": ".runtime",
+  "geminiTimeoutSeconds": 180,
+  "jevTimeoutSeconds": 45
+}

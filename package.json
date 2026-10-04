@@ -1,0 +1,22 @@
+{
+  "name": "codex-gemini-jev-bridge",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Local MCP bridge for Gemini subscription delegation and TypeSafe Jev checks.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "setup": "node setup.mjs",
+    "test": "node --test test/*.test.mjs",
+    "smoke": "node smoke.mjs",
+    "check:public": "node scripts/check-public.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.31.0",
+    "zod": "4.6.5"
+  }
+}
