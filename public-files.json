@@ -23,5 +23,9 @@
   "scripts/check-public.mjs",
   "test/core.test.mjs",
   "test/install.test.mjs",
-  "test/public.test.mjs"
+  "test/public.test.mjs",
+  "README.ru.md",
+  "docs/USER_GUIDE.ru.md",
+  "docs/FOR_GPT.ru.md",
+  "docs/PUBLISHING.ru.md"
 ]

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Local MCP bridge for Gemini subscription delegation and TypeSafe Jev checks.",
+  "description": "Local MCP bridge for Codex: Gemini through Google AI Pro and Antigravity CLI, with TypeSafe Jev checks. EN/RU guides.",
   "license": "MIT",
   "engines": {
     "node": ">=22"

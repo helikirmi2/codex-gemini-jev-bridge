@@ -1,57 +1,67 @@
 # Gemini + Jev Bridge for Codex
 
-Локальный MCP-сервер: Codex передаёт Gemini содержательные рутинные задачи, а TypeSafe Jev проверяет результат по заданным критериям. Codex отвечает за план, применение изменений и тесты.
+[English](README.md) | [Русский](README.ru.md)
 
-**Gemini работает через подписку Google в Antigravity CLI.** Расход дополнительных кредитов выключен (`useG1Credits=false`); Gemini API-ключи и платный запасной маршрут не поддерживаются. Jev использует отдельный ключ и квоты TypeSafe. Проект независимый, не официальный продукт Google, OpenAI или TypeSafe.
+A local MCP server that lets Codex delegate substantial routine drafting, analysis and code proposals to Gemini. TypeSafe Jev checks the draft against explicit criteria. Codex plans the work, reviews and applies changes, runs tests and gives the final answer.
 
-## С чего начать
+**Gemini uses the included quota of a Google AI Pro subscription through Antigravity CLI.** The bridge requires `useG1Credits=false`: when quota runs out, Gemini work stops until it resets. It does not use a Gemini API key, API billing, credit overages or a paid fallback. Model availability and limits depend on the signed-in Google account and [Google's current plan terms](https://www.antigravity.google/docs/plans).
 
-- **Пользователю:** [установка, использование и устранение ошибок](docs/USER_GUIDE.md).
-- **Другому чату GPT/Codex:** [готовый стартовый запрос и инструкция](docs/FOR_GPT.md).
-- **Перед GitHub:** [проверка и публикация](docs/PUBLISHING.md).
-- **Для разработки:** [правила проекта](AGENTS.md), [границы доступа к данным](SECURITY.md).
+**Jev uses a separate TypeSafe account, API key and quota.** It is not included in Google AI Pro. This is an independent project, unaffiliated with Google, OpenAI or TypeSafe.
 
-Требуются Node.js 22+, npm, Codex с поддержкой локального MCP, установленный Antigravity CLI с входом в подходящий Google-аккаунт и ключ TypeSafe. Доступ к моделям зависит от аккаунта и текущих условий Google. Инструкция ориентирована на Windows/PowerShell; реальная работа сервисов на macOS/Linux в этой версии не проверена.
+## EN/RU guides
 
-После установки и входа в Antigravity выполните в папке репозитория:
+| Guide | English | Русский |
+| --- | --- | --- |
+| Installation, usage and troubleshooting | [User guide](docs/USER_GUIDE.md) | [Инструкция пользователя](docs/USER_GUIDE.ru.md) |
+| Setup prompt and instructions for another GPT/Codex chat | [GPT guide](docs/FOR_GPT.md) | [Инструкция для GPT](docs/FOR_GPT.ru.md) |
+| Preparing and publishing a clean source export | [Publishing guide](docs/PUBLISHING.md) | [Публикация](docs/PUBLISHING.ru.md) |
+
+## Quick start
+
+You need Node.js 22+, npm, Codex with local MCP support, [Antigravity CLI](https://www.antigravity.google/docs/cli/install/) signed in to your Google AI Pro account, and a TypeSafe key. These instructions use Windows/PowerShell; live service access on macOS/Linux has not been verified for this release.
+
+In the repository folder:
 
 ```powershell
 npm.cmd ci --ignore-scripts
 node setup.mjs
 ```
 
-Отредактируйте созданный `settings.json`: укажите модель из списка Antigravity, путь к CLI и только нужные исходные папки. Ключ TypeSafe сохраните отдельно в `.secrets/TYPESAFE_API_KEY`. Затем:
+Edit the generated `settings.json`: select an available Gemini Flash model from `agy models`, set the CLI path and allow only the project folders you need in `sourceRoots`. Store the TypeSafe key separately in `.secrets/TYPESAFE_API_KEY`. Then:
 
 ```powershell
 npm.cmd test
 node smoke.mjs --local-only
 node install.mjs
+```
+
+Review the installation plan before applying it:
+
+```powershell
 node install.mjs --apply
 ```
 
-`install.mjs` без параметров показывает план. `--apply` регистрирует MCP, добавляет правила делегирования и ограничивает инструменты **глобального профиля Antigravity CLI**, что затронет и ручные сессии CLI. Существующие файлы сохраняются в резервных копиях. Подробности и откат — в [инструкции](docs/USER_GUIDE.md). После применения перезапустите Codex.
+The installer registers the MCP server, adds delegation rules and restricts the **global Antigravity CLI profile**, including manual CLI sessions. It backs up existing files. See the [user guide](docs/USER_GUIDE.md) for the exact changes and removal steps, then restart Codex.
 
-## Как распределяется работа
+## MCP tools
 
-| Инструмент | Назначение |
+| Tool | Purpose |
 | --- | --- |
-| `delegate_task` | Gemini готовит текст или патч, Jev проверяет 1–6 критериев; результат сохраняется локально |
-| `jev_evaluate` | До 12 компактных оценок за один запрос: классификация, выбор, ранжирование, проверка доказательств |
-| `bridge_status` | Локальный статус настроек, без запросов к сервисам |
+| `delegate_task` | Gemini drafts text or a patch; Jev checks 1–6 criteria; results are saved locally |
+| `jev_evaluate` | Up to 12 compact routing, ranking or evidence questions per request |
+| `bridge_status` | Local configuration status without contacting the services |
 
-Ключи и личные настройки отсутствуют в исходниках. Внешним сервисам передаются только заданный текст и явно выбранные файлы. Сгенерированные результаты могут содержать приватные данные и исключены из публикации.
+Only task text and explicitly selected files are sent to the providers. Credentials, local settings and generated results stay out of Git. Read the [data boundaries](SECURITY.md) and [delegation rules](docs/DELEGATION.md) before selecting files. Jev scores are advisory; they do not replace review or tests. Delegation still uses Codex for task setup and review, so it does not guarantee a fixed quota saving.
 
-Делегирование не обнуляет расход Codex: постановка задачи и проверка остаются за ним. Antigravity также добавляет контекст к запросу, поэтому мелкие задачи могут быть невыгодны. Точные механические операции лучше выполнять скриптами. Оценки Jev не гарантируют правильность и не заменяют тесты.
-
-## Проверки и лицензия
+## Verification
 
 ```powershell
 npm.cmd test
 npm.cmd run check:public
 ```
 
-Эти команды не вызывают Gemini и Jev. Живая проверка `node smoke.mjs` расходует квоты; её запускают отдельно после настройки. Успешная локальная проверка не подтверждает вход в аккаунты или доступность моделей.
+These checks and `node smoke.mjs --local-only` do not call Gemini or Jev. A live `node smoke.mjs` call uses their quotas and requires completed setup. Passing offline checks does not confirm account access or remaining quota.
 
-Лицензия [MIT](LICENSE). Зависимости имеют собственные лицензии. `private: true` защищает от случайного `npm publish` и не мешает размещению исходников на GitHub.
+## License
 
-Официальные источники: [Antigravity: установка и вход](https://www.antigravity.google/docs/cli/install/), [ограничение дополнительных кредитов](https://www.antigravity.google/docs/cli/credits/), [TypeSafe API](https://docs.typesafe.ai/api), [Codex MCP](https://developers.openai.com/codex/mcp).
+[MIT](LICENSE). Dependencies retain their own licenses.
