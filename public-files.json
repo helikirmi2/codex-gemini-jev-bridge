@@ -27,5 +27,9 @@
   "README.ru.md",
   "docs/USER_GUIDE.ru.md",
   "docs/FOR_GPT.ru.md",
-  "docs/PUBLISHING.ru.md"
+  "docs/PUBLISHING.ru.md",
+  "performance.mjs",
+  "test/performance.test.mjs",
+  "docs/PERFORMANCE.md",
+  "docs/PERFORMANCE.ru.md"
 ]

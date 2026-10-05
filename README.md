@@ -6,13 +6,15 @@ A local MCP server that lets Codex delegate substantial routine drafting, analys
 
 **Gemini uses the included quota of a Google AI Pro subscription through Antigravity CLI.** The bridge requires `useG1Credits=false`: when quota runs out, Gemini work stops until it resets. It does not use a Gemini API key, API billing, credit overages or a paid fallback. Model availability and limits depend on the signed-in Google account and [Google's current plan terms](https://www.antigravity.google/docs/plans).
 
-**Jev uses a separate TypeSafe account, API key and quota.** 
+**Jev uses a separate TypeSafe account, API key and quota.** It is not included in Google AI Pro. This is an independent project, unaffiliated with Google, OpenAI or TypeSafe.
+
 ## EN/RU guides
 
 | Guide | English | Русский |
 | --- | --- | --- |
 | Installation, usage and troubleshooting | [User guide](docs/USER_GUIDE.md) | [Инструкция пользователя](docs/USER_GUIDE.ru.md) |
 | Setup prompt and instructions for another GPT/Codex chat | [GPT guide](docs/FOR_GPT.md) | [Инструкция для GPT](docs/FOR_GPT.ru.md) |
+| Context selection, caching and metrics | [Performance guide](docs/PERFORMANCE.md) | [Быстродействие](docs/PERFORMANCE.ru.md) |
 | Preparing and publishing a clean source export | [Publishing guide](docs/PUBLISHING.md) | [Публикация](docs/PUBLISHING.ru.md) |
 
 ## Quick start
@@ -51,6 +53,10 @@ The installer registers the MCP server, adds delegation rules and restricts the 
 | `bridge_status` | Local configuration status without contacting the services |
 
 Only task text and explicitly selected files are sent to the providers. Credentials, local settings and generated results stay out of Git. Read the [data boundaries](SECURITY.md) and [delegation rules](docs/DELEGATION.md) before selecting files. Jev scores are advisory; they do not replace review or tests. Delegation still uses Codex for task setup and review, so it does not guarantee a fixed quota saving.
+
+## Performance
+
+Select inclusive line ranges with `source_selections`, give Jev a narrow `review_context` and mapped `review_evidence`, and keep the default compact response. Exact successful requests are cached for 10 minutes in memory. Identical concurrent Gemini tasks share one execution; distinct tasks return busy. Full drafts/reviews remain in local artifacts, with timing and actual provider-call metrics. See the [performance guide](docs/PERFORMANCE.md).
 
 ## Verification
 
