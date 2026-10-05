@@ -1,10 +1,12 @@
-# Подготовка и публикация на GitHub
+# Preparing and Publishing to GitHub
 
-Публикуйте содержимое чистой папки этого репозитория. Не используйте историю рабочего проекта, в которой могли сохраняться ключи и личные настройки. Папки `node_modules`, `.secrets`, `.runtime`, `results`, локальный `settings.json` и резервные копии в комплект не входят.
+[English](PUBLISHING.md) | [Русский](PUBLISHING.ru.md)
 
-`public-files.json` перечисляет файлы, предназначенные для публикации. При добавлении нового публичного файла обновите список. Это также удобно для сборки ZIP: включайте только перечисленные пути.
+Publish from a clean directory of this repository. Do not publish from an active working tree that may contain credentials, runtime artifacts, or local settings. The `node_modules`, `.secrets`, `.runtime`, and `results` directories, local `settings.json`, and backup files are excluded from publication.
 
-## Проверка
+`public-files.json` defines the explicit list of files permitted for distribution. When adding a new public file, update this manifest. It also serves as the file list when packaging a clean archive.
+
+## Pre-Publish Verification
 
 ```powershell
 npm.cmd ci --ignore-scripts
@@ -13,11 +15,11 @@ node smoke.mjs --local-only
 npm.cmd run check:public
 ```
 
-Сканер ищет распространённые форматы ключей, личные домашние пути и email, сверяет состав с разрешённым списком. При наличии `.git` он проверяет также индекс, включая добавленные принудительно игнорируемые файлы и содержимое staged-версий. Он выводит категории находок, а не значения секретов. Старые коммиты сканер не проверяет. Нужен и обычный просмотр содержимого перед публикацией.
+The public release checker scans for credential formats, private home paths, and personal email addresses, verifying staged assets against `public-files.json`. If a `.git` repository exists, it checks the index, including force-added files and staged file contents. Findings are reported by category without exposing detected strings. Note that the scanner does not inspect historical Git commits; perform a manual review of all files prior to publication.
 
-## Новый репозиторий
+## Initializing a New Repository
 
-Следующие команды предназначены для самостоятельного запуска после просмотра комплекта. Они создают новый локальный репозиторий; **последняя команда публикует исходники**.
+Start a new Git repository from the clean export, then review the staged files. These commands do not publish anything:
 
 ```powershell
 git init -b main
@@ -27,23 +29,25 @@ git diff --cached --stat
 git diff --cached
 ```
 
-Проверьте автора Git до создания коммита: имя и email попадут в публичную историю. Если нужен псевдоним, настройте для этого репозитория выбранное имя и свой GitHub noreply-адрес из настроек аккаунта. Не копируйте чужие или вымышленные реквизиты.
+Verify Git commit author details before committing: the configured name and email address will appear in public commit logs. If anonymity is required, configure a pseudonym and a GitHub noreply email address from your account settings before proceeding.
 
-После проверки:
+Create the initial commit:
 
 ```powershell
 git commit -m "Initial public release"
 ```
 
-Создайте на GitHub пустой репозиторий без автоматически добавленных файлов. Скопируйте его HTTPS-адрес и используйте вместо `REPOSITORY_URL`:
+Create an empty repository on GitHub without default files. Replace `REPOSITORY_URL` with its HTTPS URL. The `git push` command below publishes the source:
 
 ```powershell
 git remote add origin REPOSITORY_URL
 git push -u origin main
 ```
 
-Альтернатива — загрузить файлы чистого комплекта через интерфейс GitHub. Проверьте, что добавились и файлы с точкой в начале, включая `.github/workflows/ci.yml`.
+Alternatively, upload the clean distribution files directly via the GitHub web interface, ensuring dotfiles including `.github/workflows/ci.yml` are included.
 
-Не добавляйте в GitHub Actions Google-вход или TypeSafe-ключ: workflow выполняет только локальные тесты. Его успешное завершение не подтверждает живой доступ к моделям. Загрузка зависимостей и работа GitHub Actions зависят от условий GitHub/npm; эта конфигурация не управляет их квотами.
+## Offline CI Workflows and Licensing
 
-Лицензия MIT уже включена. Поле автора не содержит личного имени. Настройка `private: true` в package.json предотвращает случайную публикацию пакета в npm, но не ограничивает размещение исходников на GitHub.
+Do not configure Google credentials or TypeSafe API keys in GitHub Actions secrets. The GitHub Actions workflow installs npm dependencies and runs `npm test`, `node smoke.mjs --local-only` and `npm run check:public`, without calling Gemini or Jev. Successful workflow completion does not indicate live model availability or validate quota access.
+
+The [MIT license](../LICENSE) is included in the repository.

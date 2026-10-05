@@ -1,54 +1,58 @@
-# Инструкция для пользователя
+# User Guide
 
-## 1. Подготовьте программы и доступ
+[English](USER_GUIDE.md) | [Русский](USER_GUIDE.ru.md)
 
-Установите Node.js 22 или новее и Codex с поддержкой MCP. В PowerShell проверьте `node --version` и `npm.cmd --version`. В других оболочках обычно используется `npm` вместо `npm.cmd`.
+## 1. Prepare Software and Access
 
-Установите Antigravity CLI по [официальной инструкции Google](https://www.antigravity.google/docs/cli/install/). Запустите `agy` и войдите в Google-аккаунт с подходящей подпиской. Браузерный вход выполняется вами; пароль, cookies, коды входа и OAuth-файлы в чат не передавайте.
+Install Node.js 22 or newer and Codex with MCP support. In PowerShell, verify `node --version` and `npm.cmd --version`. In other shells, `npm` is typically used instead of `npm.cmd`.
 
-Для Windows стандартный путь CLI — `~/AppData/Local/agy/bin/agy.exe`. Если команда `agy` не найдена в PATH:
+Install the Antigravity CLI following the [official Google documentation](https://www.antigravity.google/docs/cli/install/). Launch `agy` and sign in to a Google account with an eligible Google AI Pro subscription. Browser sign-in is performed by you; do not share passwords, cookies, login codes, or OAuth files in chat.
+
+On Windows, the default CLI executable path is `~/AppData/Local/agy/bin/agy.exe`. If the `agy` command is not found in your PATH:
 
 ```powershell
 & "$env:LOCALAPPDATA\agy\bin\agy.exe" models
 ```
 
-Выберите доступную этому аккаунту модель Gemini Flash. Названия меняются, поэтому в репозитории нет автоматически выбранной модели. Пример ранее проверенного идентификатора — `gemini-3.8-flash-low`; используйте его только если он присутствует в вашем списке.
+Select an available Gemini Flash model from `agy models`. Model names change, so the repository leaves the model choice to you.
 
-Подписка Google и TypeSafe — разные сервисы. Получите ключ в своём аккаунте TypeSafe. Этот мост не включает бесплатный тариф Jev и не управляет вашим биллингом TypeSafe. Gemini API-ключ получать не требуется.
+Gemini access specifically uses the Google AI Pro subscription's included Antigravity CLI quota with `useG1Credits=false`, no Gemini API backend, no overage credits/purchases, and no automatic paid fallback. Account and model availability is determined by Google, not by the bridge. You do not need to obtain a Gemini API key.
 
-## 2. Распакуйте или клонируйте репозиторий
+Google and TypeSafe subscriptions are separate services. Obtain an API key in your own TypeSafe account. Jev uses a separate TypeSafe account, key, and quota, not Google AI Pro. This bridge does not provide a free Jev tier and does not manage your TypeSafe billing.
 
-Разместите папку там, где она останется после установки: Codex будет запускать сервер по этому пути. Откройте терминал в этой папке:
+## 2. Unpack or Clone the Repository
+
+Place the folder in its permanent location: Codex will run the server from this path. Open a terminal in that folder:
 
 ```powershell
 npm.cmd ci --ignore-scripts
 node setup.mjs
 ```
 
-`setup.mjs` создаёт `settings.json` и каталог `.secrets`. Существующие настройки он не перезаписывает. Сохраните ключ TypeSafe одной строкой в `.secrets/TYPESAFE_API_KEY` через локальный редактор. Не вставляйте ключ в команду, историю терминала, чат или `settings.json`.
+`setup.mjs` creates `settings.json` and the `.secrets` directory. It does not overwrite existing configurations. Save your TypeSafe API key as a single line in `.secrets/TYPESAFE_API_KEY` using a local editor. Do not put the key into commands, terminal history, chat, or `settings.json`.
 
-Альтернатива — переменная окружения `TYPESAFE_API_KEY`, унаследованная процессом Codex; она имеет приоритет над файлом. Изменённое окружение может потребовать перезапуска приложения.
+Alternatively, set the `TYPESAFE_API_KEY` environment variable inherited by the Codex process; it takes precedence over the key file. Updating the environment may require restarting the application.
 
-## 3. Настройте локальные пути
+## 3. Configure Local Paths
 
-Отредактируйте `settings.json`, сохранив формат JSON. В путях удобно использовать `/`.
+Edit `settings.json` while preserving valid JSON syntax. Forward slashes (`/`) work cleanly across platforms.
 
-| Поле | Что указать |
+| Field | Description |
 | --- | --- |
-| `keyFile` | Путь к файлу TypeSafe; по умолчанию `.secrets/TYPESAFE_API_KEY` |
-| `sourceRoots` | Массив папок, из которых разрешено явно выбирать файлы. `.` разрешает только папку этого репозитория |
-| `geminiEntry` | Полный путь к исполняемому файлу `agy`; допустимо начало `~/` |
-| `geminiModel` | Доступный идентификатор Gemini из `agy models`, вместо `CHOOSE_AVAILABLE_GEMINI_FLASH_MODEL` |
-| `jevModel` | По умолчанию `jev-latest` |
-| `runtimeDirectory` | Локальная рабочая папка CLI; по умолчанию `.runtime` |
-| `geminiTimeoutSeconds` | От 10 до 180 секунд |
-| `jevTimeoutSeconds` | От 5 до 45 секунд на попытку |
+| `keyFile` | Path to the TypeSafe key file; default is `.secrets/TYPESAFE_API_KEY` |
+| `sourceRoots` | Array of directories from which files may be explicitly selected. `.` allows only this repository directory |
+| `geminiEntry` | Full path to the `agy` executable; `~/` prefix is supported |
+| `geminiModel` | An available Gemini Flash model identifier from `agy models`, replacing `CHOOSE_AVAILABLE_GEMINI_FLASH_MODEL` |
+| `jevModel` | Default is `jev-latest` |
+| `runtimeDirectory` | Local CLI working directory; default is `.runtime` |
+| `geminiTimeoutSeconds` | 10 to 180 seconds |
+| `jevTimeoutSeconds` | 5 to 45 seconds per attempt |
 
-Относительные пути считаются от папки репозитория. `~/` раскрывается в домашнюю папку текущего пользователя. Переменные вида `%USERPROFILE%` внутри JSON не раскрываются. Добавляйте в `sourceRoots` конкретные проекты, а не весь диск или домашнюю папку. Пустой массив разрешает задачи только с переданным текстом.
+Relative paths resolve from the repository folder. `~/` expands to the current user's home directory. Environment variables such as `%USERPROFILE%` do not expand inside JSON. Add specific project folders to `sourceRoots` rather than entire drives or home directories. An empty array permits tasks with inline prompt text only.
 
-`settings.json` хранится только локально. В Git входит шаблон `settings.example.json`. Путь к профилю Antigravity вычисляется автоматически: `~/.gemini/antigravity-cli/settings.json`. Отдельный API-провайдер мост не поддерживает.
+`settings.json` remains local only. Git tracks the template `settings.example.json`. The Antigravity CLI profile path is resolved automatically: `~/.gemini/antigravity-cli/settings.json`. The bridge does not support external API provider backends.
 
-## 4. Проверьте и зарегистрируйте сервер
+## 4. Verify and Register the Server
 
 ```powershell
 npm.cmd test
@@ -56,62 +60,68 @@ node smoke.mjs --local-only
 node install.mjs
 ```
 
-Первые две команды не расходуют квоты моделей. `bridge_status` показывает наличие настроек и файлов, но не остаток квот и не факт успешного входа. Некоторые поля до установки могут быть `false`.
+The first two commands do not consume model quota. `bridge_status` checks the existence of configuration files and local paths, but does not verify remaining quota or active sign-in status. Certain fields may report `false` before installation.
 
-Просмотрите план `install.mjs`. Для применения:
+Review the dry-run plan generated by `install.mjs`. To apply changes:
 
 ```powershell
 node install.mjs --apply
 ```
 
-Установщик меняет три файла:
+The installer updates three files:
 
-1. `~/.codex/config.toml` — добавляет MCP-сервер `gemini-jev` (либо каталог из `CODEX_HOME`).
-2. `~/.codex/AGENTS.md` — добавляет отмеченный блок правил делегирования.
-3. `~/.gemini/antigravity-cli/settings.json` — устанавливает `useG1Credits=false`, убирает API-провайдера и запрещает инструменты чтения/записи файлов, команд, веб-доступа и MCP.
+1. `~/.codex/config.toml` — registers the `gemini-jev` MCP server (or within `CODEX_HOME`).
+2. `~/.codex/AGENTS.md` — appends the delimited delegation rules block.
+3. `~/.gemini/antigravity-cli/settings.json` — sets `useG1Credits=false`, removes third-party API providers, and restricts built-in tools (disabling file read/write, terminal execution, web access, and external MCP).
 
-**Последнее ограничение действует на весь профиль Antigravity CLI**, включая ваши ручные сессии. Отдельное приложение Antigravity IDE установщик не настраивает. При изменении существующих файлов рядом создаются копии с суффиксом `.before-gemini-jev-...`. Эти копии могут содержать частные настройки; не публикуйте их.
+**The Antigravity profile restriction applies across the entire global Antigravity CLI profile**, including manual interactive CLI sessions. The standalone Antigravity IDE application is not modified. When modifying existing configuration files, backup copies with the `.before-gemini-jev-...` suffix are created. These backups may contain personal settings; do not publish them.
 
-Перезапустите Codex. Сервер должен предоставить `bridge_status`, `delegate_task` и `jev_evaluate`. Если у вас установлен Codex CLI, регистрацию можно проверить командой `codex mcp get gemini-jev`.
+Restart Codex. The server registers `bridge_status`, `delegate_task`, and `jev_evaluate`. If the Codex CLI is installed, verify the registration with `codex mcp get gemini-jev`.
 
-## 5. Сделайте одну живую проверку
+## 5. Perform a Live Verification
 
-После настройки можно запустить:
+Once configured, you can run:
 
 ```powershell
 node smoke.mjs --jev-only
 node smoke.mjs
 ```
 
-Первый тест проверяет Jev на вымышленных данных. Второй проверяет Gemini → Jev через MCP. **Они обращаются к сервисам и расходуют их квоты.** Для обычной разработки достаточно локальных тестов.
+The first test validates Jev connectivity using synthetic data. The second tests the Gemini → Jev pipeline via MCP. **These tests contact remote services and consume their respective quotas.** Local smoke tests are sufficient for offline verification.
 
-Gemini использует подписку через Antigravity. При исчерпании лимита работа останавливается: не включайте дополнительные кредиты и не подставляйте Gemini API-ключ. После отказа авторизации или исчерпания квоты не повторяйте запросы до устранения причины. Правило `useG1Credits=false` проверяется перед каждым запуском. Остаток и время обновления квот определяет Google, а не мост. [Настройка Google](https://www.antigravity.google/docs/cli/credits/).
+If the included Google AI Pro quota is exhausted, Gemini work stops until it resets: do not enable credit overage fallback or supply a Gemini API key. If authentication fails or quota limits are encountered, do not retry requests until resolved. The `useG1Credits=false` setting is verified prior to every execution. Account availability and reset schedules are determined by Google, not by the bridge. See the [Google documentation](https://www.antigravity.google/docs/cli/credits/).
 
-## 6. Используйте в задачах
+## 6. Using in Tasks
 
-Например, попросите Codex: «Передай Gemini подготовку черновика документации по этим двум файлам. Пусть Jev проверит, что описаны все публичные функции и не добавлены неподтверждённые возможности. Проверь результат и внеси изменения».
+For example, instruct Codex: "Have Gemini draft documentation for these two files. Then have Jev verify that all public functions are documented without unverified features. Review the output, apply the changes, and run the tests."
 
-Gemini получает только переданный контекст и выбранные файлы. Он возвращает черновик или патч; Codex читает нужные части, применяет изменения и запускает подходящие тесты. Jev может проверять результат обоих помощников. Подробные результаты лежат в `results/`; они исключены из Git.
+Gemini receives only the provided prompt context and explicitly selected files. It returns a draft or patch; Codex reads the relevant sections, applies edits, and executes project test suites. Jev can validate outputs from either assistant. Detailed execution outputs are written to `results/`, which is ignored by Git.
 
-На задачу разрешено до 20 текстовых файлов, 200 КБ каждый и 600 КБ суммарно. Не передавайте секреты в самом тексте задания: фильтр имён файлов не может найти все секреты внутри обычного исходника.
+Per-task source limits permit up to 20 text files, a maximum of 200 KB per file, and a total limit of 600 KB. Do not include secrets within prompt task text: filename filtering cannot detect credentials embedded in raw source code.
 
-## Если что-то не работает
+## Troubleshooting
 
-| Симптом | Действие |
+| Symptom | Action |
 | --- | --- |
-| `settings.json is missing` | Выполните `node setup.mjs` и настройте файл |
-| Модель не выбрана / недоступна | Проверьте `agy models` и обновите только локальный `geminiModel` |
-| `useG1Credits must be false` | Проверьте профиль CLI. После просмотра плана повторное `install.mjs --apply` восстановит ограничения |
-| `helper tool restrictions have changed` | Восстановите ограничения профиля через установщик; не обходите проверку |
-| Ошибка входа Antigravity | Выполните вход вручную в CLI, затем повторите один тест |
-| TypeSafe HTTP 401/403 | Проверьте ключ и доступ аккаунта, не выводя ключ в терминал |
-| TypeSafe HTTP 429 / квота Gemini | Дождитесь обновления соответствующей квоты; платного обхода нет |
-| Файл находится вне разрешённых корней | Укажите нужный проект в `sourceRoots`, затем перезапустите MCP/Codex |
-| Jev вернул `insufficient` или ошибку | Codex должен проверить результат сам; нельзя считать его проверенным Jev |
-| MCP отсутствует после установки | Перезапустите Codex, проверьте план, пути и установленные npm-зависимости |
+| `settings.json is missing` | Run `node setup.mjs` and configure the file |
+| Model unselected or unavailable | Check `agy models` and select an available Gemini Flash model in local `geminiModel` |
+| `useG1Credits must be false` | Check the CLI profile. Inspect `install.mjs`, then run `install.mjs --apply` to restore restrictions |
+| `helper tool restrictions have changed` | Restore CLI profile restrictions using the installer; do not bypass validation |
+| Antigravity authentication error | Sign in manually in the Antigravity CLI, then rerun a single test |
+| TypeSafe HTTP 401/403 | Verify your API key and account access without printing the key in the console |
+| TypeSafe HTTP 429 / Gemini quota exhausted | Wait for quota refresh; no paid overage fallback is supported |
+| File outside allowed roots | Add the target directory to `sourceRoots` and restart MCP/Codex |
+| Jev returns `insufficient` or error | Codex must independently review the output; do not treat it as verified by Jev |
+| MCP server missing after installation | Restart Codex, verify the installation plan, check paths, and inspect npm dependencies |
 
-## Обновление и удаление
+## Update and Uninstall
 
-Перед обновлением сохраните локальные `settings.json` и ключ вне публикуемого комплекта. Обновите исходники, выполните `npm.cmd ci --ignore-scripts`, тесты и перезапустите Codex. После переноса папки повторно примените установщик, чтобы обновить путь сервера.
+Before updating, preserve local `settings.json` and credentials outside the published tree. Update the source repository, run `npm.cmd ci --ignore-scripts`, run tests, and restart Codex. If relocating the repository directory, reapply the installer to update the server path.
 
-Для удаления закройте сессии, использующие мост, удалите только блоки между `BEGIN GEMINI-JEV BRIDGE` и `END GEMINI-JEV BRIDGE` из настроек Codex и `AGENTS.md`. Затем восстановите нужные параметры Antigravity из резервной копии, учитывая более поздние изменения. Восстановление целой старой копии может затереть новые настройки; сравните файлы прежде чем заменять. После этого перезапустите Codex и удалите папку моста, когда её результаты больше не нужны.
+To uninstall:
+
+1. Close active sessions using the bridge.
+2. Remove only the blocks delimited by `BEGIN GEMINI-JEV BRIDGE` and `END GEMINI-JEV BRIDGE` from `~/.codex/config.toml` and `~/.codex/AGENTS.md`.
+3. Restore desired Antigravity CLI configuration values in `~/.gemini/antigravity-cli/settings.json` from the `.before-gemini-jev-...` backup file, taking into account any newer modifications. Compare files before overwriting to avoid losing subsequent changes.
+4. Restart Codex.
+5. Remove the bridge directory once its results are no longer needed.

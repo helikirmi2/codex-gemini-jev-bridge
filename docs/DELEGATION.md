@@ -10,6 +10,6 @@ Use the gemini-jev MCP server for authorized routine delegation when available. 
 - Never send API keys, authentication files or unrelated private data. Keep raw logs and large outputs local; return short reports and artifact paths.
 - If a service is unavailable, report that once and continue useful authorized work. Do not repeatedly retry known authentication or quota failures.
 - Delegate only work authorized by the user. Existing instructions, access restrictions and approval boundaries still apply. Do not merge, deploy, publish or delete based on Jev scores.
-- Gemini must use Google subscription access through Antigravity CLI only. Keep useG1Credits=false. Never use Gemini API keys, API billing, purchased credits or an automatic paid fallback. Stop Gemini calls when quota is exhausted until it resets.
+- Gemini must use the included Google AI Pro subscription quota through Antigravity CLI only. Keep useG1Credits=false. Never use Gemini API keys, API billing, purchased credits or an automatic paid fallback. Stop Gemini calls when quota is exhausted until it resets.
 
 Source roots are configured in ignored local settings.json. Key values belong only in local credential files or the process environment and must never be printed or copied into prompts or configuration.
