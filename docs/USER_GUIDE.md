@@ -99,6 +99,12 @@ Gemini receives only the provided prompt context and explicitly selected files. 
 
 Per-task source limits permit up to 20 text files, a maximum of 200 KB per file, and a total limit of 600 KB. Do not include secrets within prompt task text: filename filtering cannot detect credentials embedded in raw source code.
 
+## Performance and Smaller Context
+
+Use `source_selections` to send relevant inclusive line ranges. For delegation, `review_context` replaces drafting context only for Jev; `review_evidence` maps each criterion to selected source indices. The default response is compact; full draft/review artifacts are linked. Successful exact requests are cached for 10 minutes in memory, and cache hits report no new usage. See [parameters, limits and examples](PERFORMANCE.md).
+
+After its own CLI execution, the bridge restores an explicit omitted `useG1Credits=false` because Antigravity can omit default-valued settings when saving its profile. It preserves unrelated current settings and refuses enabled credits or changed providers/permissions. Initial profile validation stays strict.
+
 ## Troubleshooting
 
 | Symptom | Action |

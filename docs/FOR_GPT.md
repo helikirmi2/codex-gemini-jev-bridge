@@ -64,6 +64,12 @@ For `jev_evaluate`, batch independent targeted questions into a single request. 
 }
 ```
 
+## Efficient Delegation
+
+Prefer inclusive 1-based `source_selections` to whole files. Zero-based source indices follow `files` first, then ranges in supplied order. Supply one `review_evidence` entry per criterion and use a concise `review_context`; otherwise the original full review context remains. Explicit empty evidence differs from omitted evidence. Keep `response_mode=compact` and inspect only relevant excerpts of `result_file`/`metadata_file`. Use `full` only for detailed ratings. Read the [performance contract and examples](PERFORMANCE.md).
+
+Successful exact requests have a fixed 10-minute process-local cache. Inspect `cached`, `coalesced`, `current_usage` and provider-call metrics before reporting consumption. Original cached usage is historical. Do not retry a known quota/auth failure. The bridge restores an omitted explicit credit prohibition after its own CLI execution; pre-call subscription validation remains strict. Restart MCP after updating to load new tool schemas and clear old process caches.
+
 ## Essential Constraints
 
 - Jev numerical evaluations and ratings are advisory. A `checks_passed` status does not grant authorization to publish, delete, deploy, or merge changes.
