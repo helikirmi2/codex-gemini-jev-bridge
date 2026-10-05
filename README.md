@@ -6,8 +6,7 @@ A local MCP server that lets Codex delegate substantial routine drafting, analys
 
 **Gemini uses the included quota of a Google AI Pro subscription through Antigravity CLI.** The bridge requires `useG1Credits=false`: when quota runs out, Gemini work stops until it resets. It does not use a Gemini API key, API billing, credit overages or a paid fallback. Model availability and limits depend on the signed-in Google account and [Google's current plan terms](https://www.antigravity.google/docs/plans).
 
-**Jev uses a separate TypeSafe account, API key and quota.** It is not included in Google AI Pro. This is an independent project, unaffiliated with Google, OpenAI or TypeSafe.
-
+**Jev uses a separate TypeSafe account, API key and quota.** 
 ## EN/RU guides
 
 | Guide | English | Русский |
